@@ -32,7 +32,7 @@ brctl stp br4 on # STP to prevent bridge loops
 brctl addif br4 vlan4
 
 logger -t "isolate_port" "services-start: Setting up IPv4 address for br4"
-ifconfig br4 192.168.2.1 netmask 255.255.255.0
+ifconfig br4 10.1.1.1 netmask 255.255.255.0
 ifconfig br4 allmulti up
 
 logger -t "isolate_port" "services-start: Updating NVRAM variables"
