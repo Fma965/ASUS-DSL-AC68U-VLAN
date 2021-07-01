@@ -1,0 +1,6 @@
+interface=br4
+# DHCPv4 range: 192.168.2.10 - 192.168.2.254, netmask: 255.255.255.0
+# DHCPv4 lease time: 86400s (1 day)
+dhcp-range=br4,192.168.2.2,192.168.2.254,255.255.255.0,86400s
+# DHCPv4 router (option 3): 192.168.2.1
+dhcp-option=br4,3,192.168.2.1

@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# Version 1.0 - Fma965
+# Based on https://wu.renjie.im/blog/network/ax88u-vlan
+
+# Make sure the script is indeed invoked
+touch /tmp/000-firewall-start
+
+logger -t "isolate_port" "firewall-start: applying INPUT rules for br4"
+
+# Allow connection to router, DHCP etc.
+iptables -I INPUT -i br4 -m state --state NEW -j ACCEPT
+
+# Only forbid br4 access the web UI and SSH of the main router
+iptables -I INPUT -i br4 -p tcp --dport 80 -j DROP
+iptables -I INPUT -i br4 -p tcp --dport 443 -j DROP
+iptables -I INPUT -i br4 -p tcp --dport 22 -j DROP
+
+logger -t "isolate_port" "firewall-start: applying INPUT rules for br4"
+
+# Forbid packets from br1 to be forwarded to other interfaces
+iptables -I FORWARD -i br4 -j DROP
+
+# But allow packet forwarding inside br1
+iptables -I FORWARD -i br4 -o br4 -j ACCEPT
+
+# Allow internet access
+iptables -I FORWARD -i br4 -o vlan3880 -j ACCEPT
+
+# Allow one-way traffic from br0 to br4
+iptables -I FORWARD -i br0 -o br4 -j ACCEPT
+iptables -I FORWARD -i br4 -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+logger -t "isolate_port" "firewall-start: all done"
+date >> /tmp/000-firewall-start
