@@ -19,7 +19,6 @@ arp -i br0 -s 192.168.1.5 24:4b:fe:04:fc:46
 # Based on https://wu.renjie.im/blog/network/ax88u-vlan
 
 logger -t "isolate_port" "services-start: Tagging port 4"
-robocfg vlan 1 ports "1 2 3 4 5t"
 robocfg vlan 4 ports "4t 5t"
 
 logger -t "isolate_port" "services-start: Creating virtual interface for eth0 vlan4"
