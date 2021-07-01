@@ -35,15 +35,16 @@ logger -t "isolate_port" "services-start: Setting up IPv4 address for br4"
 ifconfig br4 10.1.1.1 netmask 255.255.255.0
 ifconfig br4 allmulti up
 
-logger -t "isolate_port" "services-start: Updating NVRAM variables"
-nvram set vlan1ports="1 2 3 4 5*"
-nvram set vlan4ports="4* 5*"
-nvram set vlan4hwname="et0"
-nvram set lan4_ifnames="vlan4"
-nvram set lan4_ifname="br4"
-nvram commit
-killall eapd
-eapd
+## It seems like this isn't needed
+#logger -t "isolate_port" "services-start: Updating NVRAM variables"
+#nvram set vlan1ports="1 2 3 4 5*"
+#nvram set vlan4ports="4* 5*"
+#nvram set vlan4hwname="et0"
+#nvram set lan4_ifnames="vlan4"
+#nvram set lan4_ifname="br4"
+#nvram commit
+#killall eapd
+#eapd
 
 logger -t "isolate_port" "services-start: all done"
 date >> /tmp/000-services-start
