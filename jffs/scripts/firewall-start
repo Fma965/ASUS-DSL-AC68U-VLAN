@@ -16,22 +16,6 @@ iptables -I INPUT -i vlan30 -m state --state NEW -j ACCEPT
 
 logger -t "tag_lanport4" "firewall-start: applying FORWARD rules"
 
-### --- Seems to be default, so not needed ---
-# Forbid packets from VLAN20/30 from being forwarded to other interfaces
-#iptables -I FORWARD -i vlan20 -j DROP
-#iptables -I FORWARD -i vlan30 -j DROP
-
-# But allow packet forwarding inside own interfaces
-#iptables -I FORWARD -i vlan20 -o vlan20 -j ACCEPT
-#iptables -I FORWARD -i vlan30 -o vlan30 -j ACCEPT
-
-# Allow one-way traffic from lan to VLAN20/30
-#iptables -I FORWARD -i br0 -o vlan20 -j ACCEPT
-#iptables -I FORWARD -i vlan20 -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-#iptables -I FORWARD -i br0 -o vlan30 -j ACCEPT
-#iptables -I FORWARD -i vlan30 -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-### --- Seems to be default, so not needed ---
-
 # Allow internet access on VLAN20 but not VLAN30
 iptables -I FORWARD -i vlan20 -o vlan3880 -j ACCEPT
 
