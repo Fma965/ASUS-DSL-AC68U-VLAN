@@ -1,49 +1,40 @@
 #!/bin/sh
 
+# Version 1.0 - Fma965
+# Based on https://wu.renjie.im/blog/network/ax88u-vlan
+
+VLAN20IP=192.168.20.1
+VLAN30IP=192.168.30.1
+VLAN20NetMask=255.255.255.0
+VLAN30NetMask=255.255.255.0
+
 # Make sure the script is indeed invoked
 touch /tmp/000-services-start
-
-# Physical port to interface map:
-# vlan3880 WAN
-# eth0     LAN 4
-# eth0     LAN 3
-# eth0     LAN 2
-# eth0     LAN 1
-# eth1     2.4 GHz Radio
-# eth2     5 GHz Radio
 
 # Wake On LAN ARP Entry
 arp -i br0 -s 192.168.1.5 24:4b:fe:04:fc:46
 
-# Version 1.0 - Fma965
-# Based on https://wu.renjie.im/blog/network/ax88u-vlan
+# Physical port to interface map:
+# vlan3880 VDSL
+# eth0     LAN
+# eth1     2.4 GHz Radio
+# eth2     5 GHz Radio
 
-logger -t "isolate_port" "services-start: Tagging port 4"
-robocfg vlan 4 ports "4t 5t"
+logger -t "tag_lanport4" "services-start: Tagging port 4 on VLAN20"
+robocfg vlan 20 ports "4t 5t"
 
-logger -t "isolate_port" "services-start: Creating virtual interface for eth0 vlan4"
-vconfig add eth0 4
-ifconfig vlan4 up
+logger -t "tag_lanport4" "services-start: Tagging port 4 on VLAN30"
+robocfg vlan 30 ports "4t 5t"
 
-logger -t "isolate_port" "services-start: Creating bridge br4 and adding vlan4"
-brctl addbr br4
-brctl stp br4 on # STP to prevent bridge loops
-brctl addif br4 vlan4
+logger -t "tag_lanport4" "services-start: Creating virtual interface vlan20"
+vconfig add eth0 20
+ifconfig vlan20 $VLAN20IP netmask $VLAN20NetMask
+ifconfig vlan20 up
 
-logger -t "isolate_port" "services-start: Setting up IPv4 address for br4"
-ifconfig br4 10.1.1.1 netmask 255.255.255.0
-ifconfig br4 allmulti up
+logger -t "tag_lanport4" "services-start: Creating virtual interface vlan30"
+vconfig add eth0 30
+ifconfig vlan30 $VLAN30IP netmask $VLAN30NetMask
+ifconfig vlan30 up
 
-## It seems like this isn't needed
-#logger -t "isolate_port" "services-start: Updating NVRAM variables"
-#nvram set vlan1ports="1 2 3 4 5*"
-#nvram set vlan4ports="4* 5*"
-#nvram set vlan4hwname="et0"
-#nvram set lan4_ifnames="vlan4"
-#nvram set lan4_ifname="br4"
-#nvram commit
-#killall eapd
-#eapd
-
-logger -t "isolate_port" "services-start: all done"
+logger -t "tag_lanport4" "services-start: all done"
 date >> /tmp/000-services-start
