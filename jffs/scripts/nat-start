@@ -3,12 +3,15 @@
 # Version 1.0 - Fma965
 # Based on https://wu.renjie.im/blog/network/ax88u-vlan
 
+VLAN20Range=192.168.20.0/24
+VLAN30Range=192.168.30.0/24
+
 # Make sure the script is indeed invoked
 touch /tmp/000-nat-start
-logger -t "isolate_port" "nat-start: applying POSTROUTING rules for br4"
 
-# NAT inside 10.1.1.0/24 on br1
-iptables -t nat -A POSTROUTING -s 10.1.1.0/24 -d 10.1.1.0/24 -o br4 -j MASQUERADE
+logger -t "tag_lanport4" "nat-start: applying POSTROUTING rules"
+iptables -t nat -A POSTROUTING -s $VLAN20Range -d $VLAN20Range -o vlan20 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s $VLAN30Range -d $VLAN30Range -o vlan30 -j MASQUERADE
 
-logger -t "isolate_port" "nat-start: all done"
+logger -t "tag_lanport4" "nat-start: all done"
 date >> /tmp/000-nat-start
