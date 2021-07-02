@@ -1,6 +1,7 @@
-interface=br4
-# DHCPv4 range: 10.1.1.100 - 10.1.1.254, netmask: 255.255.255.0
-# DHCPv4 lease time: 86400s (1 day)
-dhcp-range=br4,10.1.1.100,10.1.1.254,255.255.255.0,86400s
-# DHCPv4 router (option 3): 10.1.1.1
-dhcp-option=br4,3,10.1.1.1
+interface=vlan20
+dhcp-range=vlan20,192.168.20.100,192.168.20.254,255.255.255.0,86400s
+dhcp-option=vlan20,3,192.168.20.1
+
+interface=vlan30
+dhcp-range=vlan30,192.168.30.100,192.168.30.254,255.255.255.0,86400s
+dhcp-option=vlan30,3,192.168.30.1
