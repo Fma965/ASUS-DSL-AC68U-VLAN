@@ -3,33 +3,44 @@
 # Version 1.0 - Fma965
 # Based on https://wu.renjie.im/blog/network/ax88u-vlan
 
+HAServer=192.168.1.4
+
 # Make sure the script is indeed invoked
 touch /tmp/000-firewall-start
 
-logger -t "isolate_port" "firewall-start: applying INPUT rules for br4"
+logger -t "tag_lanport4" "firewall-start: applying INPUT rules"
 
-# Allow connection to router, DHCP etc.
-iptables -I INPUT -i br4 -m state --state NEW -j ACCEPT
+# Allow connection to router for DHCP.
+#iptables -I INPUT -i vlan20 -m state --state NEW -j ACCEPT
+iptables -I INPUT -i vlan30 -m state --state NEW -j ACCEPT
 
-# Only forbid br4 access the web UI and SSH of the main router
-iptables -I INPUT -i br4 -p tcp --dport 80 -j DROP
-iptables -I INPUT -i br4 -p tcp --dport 443 -j DROP
-iptables -I INPUT -i br4 -p tcp --dport 22 -j DROP
+logger -t "tag_lanport4" "firewall-start: applying FORWARD rules"
 
-logger -t "isolate_port" "firewall-start: applying INPUT rules for br4"
+### --- Seems to be default, so not needed ---
+# Forbid packets from VLAN20/30 from being forwarded to other interfaces
+#iptables -I FORWARD -i vlan20 -j DROP
+#iptables -I FORWARD -i vlan30 -j DROP
 
-# Forbid packets from br1 to be forwarded to other interfaces
-iptables -I FORWARD -i br4 -j DROP
+# But allow packet forwarding inside own interfaces
+#iptables -I FORWARD -i vlan20 -o vlan20 -j ACCEPT
+#iptables -I FORWARD -i vlan30 -o vlan30 -j ACCEPT
 
-# But allow packet forwarding inside br1
-iptables -I FORWARD -i br4 -o br4 -j ACCEPT
+# Allow one-way traffic from lan to VLAN20/30
+#iptables -I FORWARD -i br0 -o vlan20 -j ACCEPT
+#iptables -I FORWARD -i vlan20 -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+#iptables -I FORWARD -i br0 -o vlan30 -j ACCEPT
+#iptables -I FORWARD -i vlan30 -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+### --- Seems to be default, so not needed ---
 
-# Allow internet access
-iptables -I FORWARD -i br4 -o vlan3880 -j ACCEPT
+# Allow internet access on VLAN20 but not VLAN30
+iptables -I FORWARD -i vlan20 -o vlan3880 -j ACCEPT
 
-# Allow one-way traffic from br0 to br4
-iptables -I FORWARD -i br0 -o br4 -j ACCEPT
-iptables -I FORWARD -i br4 -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+# Allow Access to Home Assistant on VLAN30 potentially lock this to specific ports in the future
+iptables -I FORWARD -i vlan30 -d $HAServer -j ACCEPT 
 
-logger -t "isolate_port" "firewall-start: all done"
+# Allow NTP to internet on VLAN30
+iptables -I FORWARD -i vlan30 -p udp --dport 123 -o vlan3880 -j ACCEPT
+
+
+logger -t "tag_lanport4" "firewall-start: all done"
 date >> /tmp/000-firewall-start
