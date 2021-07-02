@@ -11,7 +11,7 @@ touch /tmp/000-firewall-start
 logger -t "tag_lanport4" "firewall-start: applying INPUT rules"
 
 # Allow connection to router for DHCP.
-#iptables -I INPUT -i vlan20 -m state --state NEW -j ACCEPT
+iptables -I INPUT -i vlan20 -m state --state NEW -j ACCEPT
 iptables -I INPUT -i vlan30 -m state --state NEW -j ACCEPT
 
 logger -t "tag_lanport4" "firewall-start: applying FORWARD rules"
@@ -24,7 +24,6 @@ iptables -I FORWARD -i vlan30 -d $HAServer -j ACCEPT
 
 # Allow NTP to internet on VLAN30
 iptables -I FORWARD -i vlan30 -p udp --dport 123 -o vlan3880 -j ACCEPT
-
 
 logger -t "tag_lanport4" "firewall-start: all done"
 date >> /tmp/000-firewall-start
