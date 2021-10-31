@@ -4,6 +4,7 @@
 # Based on https://wu.renjie.im/blog/network/ax88u-vlan
 
 HAServer=192.168.1.4
+UnraidServer=192.168.1.3
 
 # Make sure the script is indeed invoked
 touch /tmp/000-firewall-start
@@ -24,6 +25,9 @@ iptables -I FORWARD -i vlan30 -d $HAServer -j ACCEPT
 
 # Allow NTP to internet on VLAN30
 iptables -I FORWARD -i vlan30 -p udp --dport 123 -o vlan3880 -j ACCEPT
+
+# Allow access to Nginx service running on UnRAID at port 666
+iptables -I FORWARD -i vlan20 -p tcp --dport 666 -d $UnraidServer -j ACCEPT
 
 logger -t "tag_lanport4" "firewall-start: all done"
 date >> /tmp/000-firewall-start
