@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Version 1.0 - Fma965
+# Version 1.1 - Fma965
 # Based on https://wu.renjie.im/blog/network/ax88u-vlan
 
 HAServer=192.168.1.4
