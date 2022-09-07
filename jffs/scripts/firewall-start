@@ -20,6 +20,9 @@ logger -t "tag_lanport4" "firewall-start: applying FORWARD rules"
 # Allow internet access on VLAN20 but not VLAN30
 iptables -I FORWARD -i vlan20 -o vlan3880 -j ACCEPT
 
+# Allow Access to Home Assistant on VLAN20 potentially lock this to specific ports in the future
+iptables -I FORWARD -i vlan20 -d $HAServer -j ACCEPT 
+
 # Allow Access to Home Assistant on VLAN30 potentially lock this to specific ports in the future
 iptables -I FORWARD -i vlan30 -d $HAServer -j ACCEPT 
 
