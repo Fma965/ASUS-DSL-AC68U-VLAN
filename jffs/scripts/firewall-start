@@ -14,7 +14,7 @@ logger -t "tag_lanport4" "firewall-start: applying INPUT rules"
 # Allow connection to router for DHCP.
 iptables -I INPUT -i vlan20 -m state --state NEW -j ACCEPT
 iptables -I INPUT -i vlan30 -m state --state NEW -j ACCEPT
-iptables -I INPUT -I vlan80 -m state --state NEW -j ACCEPT
+iptables -I INPUT -i vlan80 -m state --state NEW -j ACCEPT
 
 logger -t "tag_lanport4" "firewall-start: applying FORWARD rules"
 
