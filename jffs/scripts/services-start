@@ -5,8 +5,10 @@
 
 VLAN20IP=192.168.20.1
 VLAN30IP=192.168.30.1
+VLAN80IP=192.168.80.1
 VLAN20NetMask=255.255.255.0
 VLAN30NetMask=255.255.255.0
+VLAN80NetMask=255.255.255.0
 
 # Make sure the script is indeed invoked
 touch /tmp/000-services-start
@@ -26,6 +28,9 @@ robocfg vlan 20 ports "4t 5t"
 logger -t "tag_lanport4" "services-start: Tagging port 4 on VLAN30"
 robocfg vlan 30 ports "4t 5t"
 
+logger -t "tag_lanport4" "services-start: Tagging port 4 on VLAN80"
+robocfg vlan 80 ports "4t 5t"
+
 logger -t "tag_lanport4" "services-start: Creating virtual interface vlan20"
 vconfig add eth0 20
 ifconfig vlan20 $VLAN20IP netmask $VLAN20NetMask
@@ -36,5 +41,12 @@ vconfig add eth0 30
 ifconfig vlan30 $VLAN30IP netmask $VLAN30NetMask
 ifconfig vlan30 up
 
+logger -t "tag_lanport4" "services-start: Creating virtual interface vlan80"
+vconfig add eth0 80
+ifconfig vlan80 $VLAN80IP netmask $VLAN80NetMask
+ifconfig vlan80 up
+
+
 logger -t "tag_lanport4" "services-start: all done"
 date >> /tmp/000-services-start
+/jffs/scripts/YazDHCP startup "$@" & # YazDHCP

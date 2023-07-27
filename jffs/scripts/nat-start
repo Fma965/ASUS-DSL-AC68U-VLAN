@@ -5,6 +5,7 @@
 
 VLAN20Range=192.168.20.0/24
 VLAN30Range=192.168.30.0/24
+VLAN80Range=192.168.80.0/24
 
 # Make sure the script is indeed invoked
 touch /tmp/000-nat-start
@@ -12,6 +13,7 @@ touch /tmp/000-nat-start
 logger -t "tag_lanport4" "nat-start: applying POSTROUTING rules"
 iptables -t nat -A POSTROUTING -s $VLAN20Range -d $VLAN20Range -o vlan20 -j MASQUERADE
 iptables -t nat -A POSTROUTING -s $VLAN30Range -d $VLAN30Range -o vlan30 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s $VLAN80Range -d $VLAN80Range -o vlan80 -j MASQUERADE
 
 logger -t "tag_lanport4" "nat-start: all done"
 date >> /tmp/000-nat-start
