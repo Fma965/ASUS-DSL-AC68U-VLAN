@@ -46,7 +46,10 @@ vconfig add eth0 80
 ifconfig vlan80 $VLAN80IP netmask $VLAN80NetMask
 ifconfig vlan80 up
 
-
 logger -t "tag_lanport4" "services-start: all done"
 date >> /tmp/000-services-start
 /jffs/scripts/YazDHCP startup "$@" & # YazDHCP
+
+logger -t "Server Monitor" "enabling monitoring cronjob"
+/jffs/scripts/monitor.sh
+cru a monitor "*/5 * * * * /jffs/scripts/monitor.sh"
